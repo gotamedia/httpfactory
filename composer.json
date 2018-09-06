@@ -1,0 +1,32 @@
+{
+    "name": "atoms/httpfactory",
+    "description": "An implementation of PSR-17.",
+    "homepage": "https://bitbucket.org/gotamedia/httpfactory",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Peter Pettersson",
+            "email": "peter.pettersson@gotamedia.se"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Atoms\\HttpFactory\\": "src"
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://packages.gotamedia.se"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "atoms/http": "~0.0.1",
+        "psr/http-factory": "~1.0.0"
+    },
+    "config": {
+        "secure-http": false
+    }
+}
