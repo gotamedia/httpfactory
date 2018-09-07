@@ -6,6 +6,7 @@ namespace Atoms\HttpFactory;
 
 use Atoms\Http\Response;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class ResponseFactory implements ResponseFactoryInterface
 {
