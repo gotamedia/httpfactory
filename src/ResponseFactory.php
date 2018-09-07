@@ -14,6 +14,12 @@ class ResponseFactory implements ResponseFactoryInterface
      */
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
     {
-        return new Response($code, $reasonPhrase, (new StreamFactory())->createStream(''));
+        return new Response(
+            $code,
+            $reasonPhrase,
+            (new StreamFactory())->createStream(''),
+            [],
+            '1.1'
+        );
     }
 }

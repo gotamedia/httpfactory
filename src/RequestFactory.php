@@ -20,6 +20,12 @@ class RequestFactory implements RequestFactoryInterface
             $uri = (new UriFactory())->createUri($uri);
         }
 
-        return new Request($method, $uri, (new StreamFactory())->createStream(''));
+        return new Request(
+            $method,
+            $uri,
+            (new StreamFactory())->createStream(''),
+            [],
+            '1.1'
+        );
     }
 }

@@ -22,7 +22,18 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
             $uri = new Uri($uri);
         }
 
-        return new ServerRequest($method, $uri, StreamFactory::createStream(''));
+        return new ServerRequest(
+            $method,
+            $uri,
+            StreamFactory::createStream(''),
+            [],
+            '1.1',
+            [],
+            [],
+            [],
+            [],
+            null
+        );
     }
 
     /**
@@ -37,7 +48,18 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $method = self::getMethod($server);
         $uri = UriFactory::createUriFromArray($server);
 
-        return new ServerRequest($method, $uri, StreamFactory::createStream(''));
+        return new ServerRequest(
+            $method,
+            $uri,
+            StreamFactory::createStream(''),
+            [],
+            '1.1',
+            [],
+            [],
+            [],
+            [],
+            null
+        );
     }
 
     /**
