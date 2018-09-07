@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Atoms\Http;
+namespace Atoms\HttpFactory;
 
-use Atoms\Htto\ServerRequest;
+use Atoms\Http\ServerRequest;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
