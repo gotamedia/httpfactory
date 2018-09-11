@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Atoms\HttpFactory;
+namespace Atoms\Http;
 
-use Atoms\Http\Stream;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;

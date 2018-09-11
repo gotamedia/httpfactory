@@ -2,14 +2,29 @@
 
 declare(strict_types=1);
 
-namespace Atoms\HttpFactory;
+namespace Atoms\Http;
 
-use Atoms\Http\Response;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 class ResponseFactory implements ResponseFactoryInterface
 {
+    /**
+     * @var \Psr\Http\Message\StreamFactoryInterface
+     */
+    private $streamFactory;
+
+    /**
+     * Creates a new ResponseFactory instance.
+     *
+     * @param \Psr\Http\Message\StreamFactoryInterface $streamFactory
+     */
+    public function __construct(StreamFactoryInterface $streamFactory)
+    {
+        $this->streamFactory = $streamFactory;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -18,7 +33,7 @@ class ResponseFactory implements ResponseFactoryInterface
         return new Response(
             $code,
             $reasonPhrase,
-            (new StreamFactory())->createStream(''),
+            $this->streamFactory->createStream(''),
             [],
             '1.1'
         );

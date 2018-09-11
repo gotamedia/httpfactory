@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Atoms\HttpFactory;
+namespace Atoms\Http;
 
-use Atoms\Http\UploadedFile;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 

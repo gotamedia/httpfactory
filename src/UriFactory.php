@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Atoms\HttpFactory;
+namespace Atoms\Http;
 
-use Atoms\Http\Uri;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\UriFactoryInterface;
 

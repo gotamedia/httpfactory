@@ -2,30 +2,63 @@
 
 declare(strict_types=1);
 
-namespace Atoms\HttpFactory;
+namespace Atoms\Http;
 
-use Atoms\Http\ServerRequest;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
 class ServerRequestFactory implements ServerRequestFactoryInterface
 {
     /**
+     * @var \Atoms\Http\UriFactory
+     */
+    private $uriFactory;
+
+    /**
+     * @var \Psr\Http\Message\StreamFactoryInterface
+     */
+    private $streamFactory;
+
+    /**
+     * @var \Psr\Http\Message\UploadedFileFactoryInterface
+     */
+    private $uploadedFileFactory;
+
+    /**
+     * Creates a new RequestFactory instance.
+     *
+     * @param \Atoms\Http\UriFactory $uriFactory
+     * @param \Psr\Http\Message\StreamFactoryInterface $streamFactory
+     * @param \Psr\Http\Message\UploadedFileFactoryInterface $uploadedFileFactory
+     */
+    public function __construct(
+        UriFactory $uriFactory,
+        StreamFactoryInterface $streamFactory,
+        UploadedFileFactoryInterface $uploadedFileFactory
+    ) {
+        $this->uriFactory = $uriFactory;
+        $this->streamFactory = $streamFactory;
+        $this->uploadedFileFactory = $uploadedFileFactory;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {
         if (!$uri instanceof UriInterface) {
-            $uri = new Uri($uri);
+            $uri = $this->uriFactory->createUri($uri);
         }
 
         return new ServerRequest(
             $method,
             $uri,
-            StreamFactory::createStream(''),
+            $this->streamFactory->createStream(''),
             [],
             '1.1',
             [],
@@ -45,13 +78,13 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     public function createServerRequestFromArray(array $server): ServerRequestInterface
     {
-        $method = self::getMethod($server);
-        $uri = UriFactory::createUriFromArray($server);
+        $method = $this->getMethod($server);
+        $uri = $this->uriFactory->createUriFromArray($server);
 
         return new ServerRequest(
             $method,
             $uri,
-            StreamFactory::createStream(''),
+            $this->streamFactory->createStream(''),
             [],
             '1.1',
             [],
@@ -72,15 +105,15 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $serverParams = $_SERVER;
         $cookieParams = $_COOKIE;
         $queryParams = $_GET;
-        $uploadedFiles = self::normalizeFiles($_FILES);
+        $uploadedFiles = $this->normalizeFiles($_FILES);
         $parsedBody = $_POST;
 
-        $uri = UriFactory::createUriFromArray($serverParams);
-        $body = StreamFactory::createStreamFromFile('php://input');
+        $uri = $this->uriFactory->createUriFromArray($serverParams);
+        $body = $this->streamFactory->createStreamFromFile('php://input');
 
-        $method = self::getMethod($serverParams);
-        $headers = self::getHeaders($serverParams);
-        $protocol = self::getProtocol($serverParams);
+        $method = $this->getMethod($serverParams);
+        $headers = $this->getHeaders($serverParams);
+        $protocol = $this->getProtocol($serverParams);
 
         return new ServerRequest(
             $method,
@@ -103,7 +136,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * @return string
      * @throws \InvalidArgumentException
      */
-    private static function getMethod(array $server): string
+    private function getMethod(array $server): string
     {
         if (!isset($server['REQUEST_METHOD'])) {
             throw new InvalidArgumentException('Cannot determine HTTP method');
@@ -118,7 +151,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * @param  array $server
      * @return string
      */
-    private static function getProtocol(array $server): string
+    private function getProtocol(array $server): string
     {
         return isset($server['SERVER_PROTOCOL'])
             ? str_replace('HTTP/', '', $server['SERVER_PROTOCOL'])
@@ -132,7 +165,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * @return \Atoms\Http\UploadedFile[]
      * @throws \InvalidArgumentException
      */
-    private static function normalizeFiles(array $files): array
+    private function normalizeFiles(array $files): array
     {
         $normalizedFiles = [];
 
@@ -140,9 +173,9 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
             if ($value instanceof UploadedFileInterface) {
                 $normalizedFiles[$key] = $value;
             } elseif (is_array($value) && isset($value['tmp_name'])) {
-                $normalizedFiles[$key] = self::createUploadedFileFromSpec($value);
+                $normalizedFiles[$key] = $this->createUploadedFileFromSpec($value);
             } elseif (is_array($value)) {
-                $normalizedFiles[$key] = self::normalizeFiles($value);
+                $normalizedFiles[$key] = $this->normalizeFiles($value);
             } else {
                 throw new InvalidArgumentException('Invalid value in file specifications');
             }
@@ -158,16 +191,18 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * delegate to normalizeNestedFileSpec() and return that value.
      *
      * @param  array $specification
-     * @return \Atoms\Http\UploadedFile|array
+     * @return \Psr\Http\Message\UploadedFileInterface|array
      */
-    private static function createUploadedFileFromSpec(array $specification)
+    private function createUploadedFileFromSpec(array $specification): UploadedFileInterface
     {
         if (is_array($specification['tmp_name'])) {
-            return self::normalizeNestedFileSpec($specification);
+            return $this->normalizeNestedFileSpec($specification);
         }
 
-        return new UploadedFile(
-            $specification['tmp_name'],
+        $stream = $this->streamFactory->createStreamFromFile($specification['tmp_name']);
+
+        return $this->uploadedFileFactory->createUploadedFile(
+            $stream,
             $specification['size'],
             $specification['error'],
             $specification['name'],
@@ -184,7 +219,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * @param  array $files
      * @return \Atoms\Http\UploadedFile[]
      */
-    private static function normalizeNestedFileSpec(array $files): array
+    private function normalizeNestedFileSpec(array $files): array
     {
         $normalizedFiles = [];
 
@@ -197,7 +232,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
                 'type' => $files['type'][$key]
             ];
 
-            $normalizedFiles[$key] = self::createUploadedFileFromSpec($specification);
+            $normalizedFiles[$key] = $this->createUploadedFileFromSpec($specification);
         }
 
         return $normalizedFiles;
@@ -209,7 +244,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * @param  array $server
      * @return array
      */
-    private static function getHeaders(array $server): array
+    private function getHeaders(array $server): array
     {
         if (function_exists('getallheaders')) {
             return getallheaders();
