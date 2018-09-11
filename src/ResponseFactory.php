@@ -38,4 +38,26 @@ class ResponseFactory implements ResponseFactoryInterface
             '1.1'
         );
     }
+
+     /**
+      * Create a new response with a set of HTTP headers..
+      *
+      * @param  int $code
+      * @param  string $reasonPhrase
+      * @param  array $headers
+      * @return \Psr\Http\Message\ResponseInterface
+      */
+    public function createResponseWithHeaders(
+        int $code = 200,
+        string $reasonPhrase = '',
+        array $headers
+    ): ResponseInterface {
+        return new Response(
+            $code,
+            $reasonPhrase,
+            $this->streamFactory->createStream(''),
+            $headers,
+            '1.1'
+        );
+    }
 }

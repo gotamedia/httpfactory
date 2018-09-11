@@ -53,27 +53,4 @@ class RequestFactory implements RequestFactoryInterface
             '1.1'
         );
     }
-
-    /**
-     * Create a new request with a set of HTTP headers.
-     *
-     * @param  string $method
-     * @param  UriInterface|string $uri
-     * @param  array $headers
-     * @return \Psr\Http\Message\RequestInterface
-     */
-    public function createRequestWithHeaders(string $method, $uri, array $headers): RequestInterface
-    {
-        if (is_string($uri)) {
-            $uri = $this->uriFactory->createUri($uri);
-        }
-
-        return new Request(
-            $method,
-            $uri,
-            $this->streamFactory->createStream(''),
-            $headers,
-            '1.1'
-        );
-    }
 }
