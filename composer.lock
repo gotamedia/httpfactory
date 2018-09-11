@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "atoms/http",
-            "version": "0.0.7",
+            "version": "0.0.8",
             "source": {
                 "type": "git",
                 "url": "https://bitbucket.org/gotamedia/http.git",
-                "reference": "0b979e5b7c9ea705f7b3c83fb30cab6946454687"
+                "reference": "1ddf48c64c102a6239af94afc48482e8b7833449"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/gotamedia/http/get/0b979e5b7c9ea705f7b3c83fb30cab6946454687.zip",
-                "reference": "0b979e5b7c9ea705f7b3c83fb30cab6946454687",
+                "url": "https://bitbucket.org/gotamedia/http/get/1ddf48c64c102a6239af94afc48482e8b7833449.zip",
+                "reference": "1ddf48c64c102a6239af94afc48482e8b7833449",
                 "shasum": ""
             },
             "require": {
@@ -58,9 +58,9 @@
             "description": "Implementations of PSR-7.",
             "homepage": "https://bitbucket.org/gotamedia/http",
             "support": {
-                "source": "https://bitbucket.org/gotamedia/http/src/0b979e5b7c9ea705f7b3c83fb30cab6946454687/?at=master"
+                "source": "https://bitbucket.org/gotamedia/http/src/1ddf48c64c102a6239af94afc48482e8b7833449/?at=0.0.8"
             },
-            "time": "2018-09-11T08:11:58+00:00"
+            "time": "2018-09-11T13:47:50+00:00"
         },
         {
             "name": "psr/http-factory",
