@@ -50,7 +50,7 @@ class ResponseFactory implements ResponseFactoryInterface
     public function createResponseWithHeaders(
         int $code = 200,
         string $reasonPhrase = '',
-        array $headers
+        array $headers = []
     ): ResponseInterface {
         return new Response(
             $code,
